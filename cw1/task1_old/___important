@@ -1,0 +1,258 @@
+#importing
+#%%
+"""THis is not WOKRINGGGGGG"""
+import numpy as np
+import numpy as np
+import time
+import urllib.request
+from scipy import ndimage
+from scipy.ndimage.morphology import distance_transform_bf
+from matplotlib import pyplot as plt
+
+#%%
+#setting arrays
+easy = np.array([
+    [1,0,0,1,1],
+    [1,1,1,1,1],
+    [1,1,1,1,1],
+    [0,1,1,1,1],
+    [0,1,1,1,1]])
+
+easy3d = np.array([
+        [[ 0, 1, 1, 1, 0],
+        [ 1, 1, 1, 1, 1],
+        [ 0, 1, 1, 1, 0],
+        [ 0, 0, 1, 1, 1],
+        [0, 0, 0, 1, 1]],
+
+       [[ 0, 0, 1,1,0],
+        [0, 0, 1,1,1],
+        [1, 0, 1,1,0],
+        [0,0,0,1,1],
+        [0,0,0,0,1]],
+
+       [[0, 0, 0,1,1],
+        [0, 0, 1,1,1],
+        [1, 0, 0,1,0],
+        [0,0,0,1,1],
+        [0,0,1,1,1]]])
+
+mdup_data = np.array([
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,0,1,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 ])
+
+
+mdup_data3d = np.array([
+                [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
+                 
+                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
+
+                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,0],
+                 [0, 1, 1, 1, 0, 0, 0, 0, 0,0,0,1,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
+
+                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,0,1,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
+
+                
+                 ])
+
+#%%
+#prebuilt
+def pre_built(vol_bi_img):
+    """this is the scipy distance transform to compare with"""
+    return ndimage.distance_transform_edt(vol_bi_img)
+""" 
+download label_train00.npy from download link provided in course work
+“label_train00.npy” loaded as lbt_data contains a binary segmentation of Pelvic MR volume image
+"""
+
+lbt_url = 'https://weisslab.cs.ucl.ac.uk/WEISSTeaching/datasets/-/raw/promise12/label_train00.npy'
+urllib.request.urlretrieve(lbt_url, 'lbt_file.npy')
+lbt_data = np.load('lbt_file.npy',allow_pickle=False)
+
+#%%
+#best2d
+def best(mat):
+    """it was working but i've managed to fuck it up"""
+    #mat = mdup_data
+    m = mat.shape[0]
+    n = mat.shape[1]
+    newx = [-1, 1, 0, 0]#1, 1,-1,-1]
+    newy = [0, 0, -1, 1]#1,-1,-1, 1]
+     
+    ones=[]
+    zeros=[]
+    visit= np.ones(shape=(mat.shape))
+    visit = visit*999
+    for i in range(m):
+        for j in range(n): 
+            if mat[i][j]==1:
+                ones.append(np.array([i,j]))
+            else: 
+                zeros.append(np.array([i,j]))
+                visit[i,j] = 0
+                #q.append([i,j])
+                
+    #print(easy)
+    #ones = [np.array([2,2]), np.array([0,3])]
+    euc_array= np.zeros(shape=(mat.shape))
+    #print(ones)
+    visited = []
+    for one in ones:
+        print(one, end='')
+        visit[one[0]][one[1]] = 1
+        #euc_array[one[0]][one[1]] = 0
+        #euc_array = euc_array*999
+        #print((one[0],one[1]))
+        q= [one]
+        euc_dist=[]
+        poped = []
+
+        while (len(q)):
+            poped = q[0]
+            q.pop(0)
+            # coordinate of currently popped node
+            x = poped[0]
+            y = poped[1]
+            print("(x,y)=", end='')
+            print((x,y), end =';')
+            #print(poped, end ='')
+            # now check for all adjancent of popped element
+            for i in range(4):
+                adjx = x + newx[i]
+                adjy = y + newy[i]
+                #print([x,y], end='')
+                if (adjx >= 0 and adjx < m and adjy >= 0 and
+                    adjy < n):
+                    print((adjx,adjy),end='')
+                    e = np.sqrt((one[0]-adjx)**2+(one[1]-adjy)**2)
+                    if mat[adjx][adjy]==0:
+                        euc_dist.append(e)
+                        print("zero")
+                        print("euc dist",end ='')
+                        print(euc_dist)
+                    else:# visit[adjx][adjy] >  visit[x][y] +1:
+                        #visit[adjx][adjy] = visit[x][y] +1
+                        # == 0:# visit[adjx][adjy] + 1:
+                        #visit[adjx][adjy] = 1
+                        #print((adjx,adjy),end='')
+                    
+                        #if mat[adjx][adjy]==0:
+                         #   e = np.sqrt((one[0]-adjx)**2+(one[1]-adjy)**2)
+                          #  euc_dist.append(e)
+                           # print("zero at"+str((adjx,adjy)))
+                            #print(min(euc_dist)) 
+                            #visit[adjy][adjy] = min(euc_dist)
+                        #else:
+                        q.append([adjx,adjy])
+                     #   visit[adjy][adjy] = 1
+                    #else:
+                       # q.append([adjx, adjy])
+        euc_array[one[0]][one[1]] =  min(euc_dist)
+        #print(visit)
+    #print(visit)
+
+    return euc_array
+
+a = easy
+#a = mdup_data
+#a = lbt_data[15]
+print(a)
+my_alg_time = time.time()
+a1 = pre_built(a)
+print("pre_build takes %s seconds " % (time.time() - my_alg_time))
+
+#print(a1[15])
+pre_alg_time = time.time()
+a2 = best(a)
+#a2 = pre_built(a)
+print("new takes %s seconds " % (time.time() - pre_alg_time))
+
+#pre_alg_time = time.time()
+#a3 = best(a)
+#a2 = pre_built(a)
+#print("best takes %s seconds " % (time.time() - pre_alg_time))
+#print(a1)
+#print(a2)
+
+#print(np.array_equal (a1, a2, equal_nan=False))
+#print(np.allclose(a1,a2, rtol=.2, atol=.2))
+
+plt.figure()
+plt.subplot(1,3,1)
+plt.imshow(a1)
+plt.subplot(1,3,2)
+plt.imshow(a2)
+#plt.subplot(1,3,3)
+#plt.imshow(a3)
+plt.show()
+
+# %%

@@ -112,7 +112,7 @@ class Image3D:
         #Normalise array to values between 0 and 1 
         self.array = (array - np.min(array))/(np.max(array) - np.min(array))
         self.d = dims
-        #self.shape = (array.shape[0]* dims[0], array.shape[1]*dims[1], array.shape[2]*dims[2])
+        self.shape = (array.shape[0]* dims[0], array.shape[1]*dims[1], array.shape[2]*dims[2])
         #self.shape = array.shape
         #specify local image coordinates
         # Easiest way is to use array indexes as coordinates instead of taking the 
@@ -120,12 +120,20 @@ class Image3D:
         x = np.arange(0, array.shape[0])
         y = np.arange(0, array.shape[1])
         z = np.arange(0, array.shape[2])
+       
+        #x = np.linspace(-array.shape[0]/2 + 0.5, array.shape[0]/2 - 0.5,array.shape[0])*self.d[0]
+        #y = np.linspace(-array.shape[1]/2 + 0.5, array.shape[1]/2 - 0.5,array.shape[1])*self.d[0]
+        #z = np.linspace(-array.shape[2]/2 + 0.5, array.shape[2]/2 - 0.5,array.shape[2])*self.d[0]
+        
+        #x = np.linspace(-array.shape[0] + 0.5, array.shape[0] - 0.5,array.shape[0])*self.d[0]
+        #y = np.linspace(-array.shape[1] + 0.5, array.shape[1] - 0.5,array.shape[1])*self.d[0]
+        #z = np.linspace(-array.shape[2] + 0.5, array.shape[2] - 0.5,array.shape[2])*self.d[0]
         
         XX, YY, ZZ = np.meshgrid(x, y, z, indexing='ij')
         
-        self.XX = XX*dims[0]
-        self.YY = YY*dims[1]
-        self.ZZ = ZZ*dims[2]
+        self.XX = XX
+        self.YY = YY
+        self.ZZ = ZZ
         self.coord = np.concatenate((self.XX.reshape(-1,1), self.YY.reshape(-1,1), self.ZZ.reshape(-1,1), np.ones((np.prod(self.array.shape), 1))), axis=1).T
     
     def warp3d(self, affineTransform_input):
@@ -135,8 +143,7 @@ class Image3D:
         image = self.array
         
         # transform matrix being centered
-        #center = tuple([s //2 for s in self.shape])
-        center = (image.shape[0]*self.d[0] /2, image.shape[1]*self.d[1]/2, image.shape[2]*self.d[2]/2)
+        center = tuple([s //2 for s in self.shape])
         tf_matrix_centred = np.eye(4)
         tf_matrix_centred[0, 3] = 0 - center[0]
         tf_matrix_centred[1, 3] = 0 - center[1]
@@ -150,9 +157,9 @@ class Image3D:
         MTM = np.dot(tf_matrix_decentered, np.dot(affineTransform_input, tf_matrix_centred))
         
         # interpolation parameters
-        ipts = np.arange(0, self.array.shape[0])*self.d[0]
-        jpts = np.arange(0, self.array.shape[1])*self.d[1]
-        kpts = np.arange(0, self.array.shape[2])*self.d[2]
+        ipts = np.arange(0, self.array.shape[0])
+        jpts = np.arange(0, self.array.shape[1])
+        kpts = np.arange(0, self.array.shape[2])
         #ipts = np.linspace(-self.array.shape[0] + 0.5, self.array.shape[0] - 0.5,array.shape[0])*self.d[0]
         #jpts = np.linspace(-self.array.shape[1] + 0.5, self.array.shape[1] - 0.5,array.shape[1])*self.d[0]
         #kpts = np.linspace(-self.array.shape[2] + 0.5, self.array.shape[2] - 0.5,array.shape[2])*self.d[0]
@@ -168,8 +175,6 @@ class Image3D:
 
 class AffineTransform: 
     def __init__(self, tranform_parameter, s =[0,0,0]):
-        """Rigid transform should be in order, Scaling, Translation, Rotation. Default scaling is 1.
-        Affine transform should be in order of matrix elements."""
         if tranform_parameter != None: 
             self.tP = tranform_parameter
             lenM = (len(self.tP))
@@ -177,21 +182,21 @@ class AffineTransform:
             if lenM != 6 and lenM != 7 and lenM != 12:
                 print("Error : Transform Matrix Shape Incorrect")
             elif lenM == 6:
-                #print("Rigid Transform with " + str(lenM) + " transform parameters.")
-                #print("Should be in order, Translation(3), Rotation(3)")
+                print("Rigid Transform with " + str(lenM) + " transform parameters.")
+                print("Should be in order, Translation(3), Rotation(3)")
                 self.tM = self.rigid_transform()
             elif lenM == 7:
-                #print("Rigid Transform with " +str(lenM) + " Transform parameters.")
-                #print("Should be in order, Scaling, Translation, Rotation")
+                print("Rigid Transform with " +str(lenM) + " Transform parameters.")
+                print("Should be in order, Scaling, Translation, Rotation")
                 self.tM = self.rigid_transform()
             elif lenM == 12:
-                #print("Rigid Transform with " +str(lenM) + " Transform parameters.")
-                #print("Should be in order of Matrix elements")
+                print("Rigid Transform with " +str(lenM) + " Transform parameters.")
+                print("Should be in order of Matrix elements")
                 self.tM = self.affine_transform()
         else:
             self.s = s
             self.tM = self.random_transform_generator(s)
-
+    
     # precomute the transformation matric in homogenours coordinates
     # using rigid_transform or affine_transform 
     # and save it in a class member variable
@@ -359,21 +364,13 @@ class AffineTransform:
         # transformation matrix in homogeneous coordinates.
         return rand
 
-
-def plot_both(a,i,m):
-    fig, ax = plt.subplots(1, 2)
-    ax[0].imshow(a[m], cmap='gray',origin='lower', vmin=0, vmax=1)
-    ax[1].imshow(i[m], cmap='gray',origin='lower', vmin=0, vmax=1)     
-    ax[0].title.set_text('Original')
-    ax[1].title.set_text('Transformed')
-    plt.show()
 #%%
 
 # manually define 10 rigid and affine transformations
 t00 = [1,0,0,0,0,0,0]
 t0 = [0,2.5,1,0,0,(np.pi)]
 t1 = [.5, 0,0,1,.45,.57,0]
-t2 = [.5,1,.5,1,(np.pi),(2*np.pi),0]
+t2 = [1,.5,1,(np.pi),(2*np.pi),0]
 
 a = 1 + 0.1*(1.16748322)
 f = 1 + 0.1*(.8965)
@@ -390,18 +387,16 @@ d = 10*1.532
 h = 10*.606
 l = 10*.5679
 
-t3 = [1,-b,-c,0,b,1,-e,0,-c-.1,e+.5,1,0]
-t4 = [1,0,0,5,0,1,1.3,5,0,1.3,1,5]
-t5 = [1,0,0,5,.3,1,.5,15,0,0,1,5]
-
+t3 = [1,0,c,0,b,1,e,0,c,e,1,0]
+t4 = [1,0,c,0,b,1,e,0,c,e,1,1]
 t6 = [a,b,c,d,e,f,g,h,i,j,k,l]
-t7 = [f+.1,e+.05,i+.5,l+.2,b+.2,k+.05,j+.08,d+.56,c+.76,j+.22,a+.1,h+.111]
+t7 = [f,e,i,l,b,k,j,d,c,j,a,h]
 
-a = 1 + 0.1*(1.782)
-f = 1 + 0.1*(.451111)
-k= 1+0.1*(.12769)
+a = 1 + 0.1*(1.1782)
+f = 1 + 0.1*(.9845)
+k= 1+0.1*(.769)
 
-b = 0.1*(0.025679)
+b = 0.1*(-0.5679)
 c = 0.1*(.1311)
 g= 0.1*(.7498)
 e=0.1*(.444)
@@ -412,103 +407,66 @@ d = 10*1.456
 h = 10*.806
 l = 10*.59975
 
-t8 = [a+.12,b+.234,c+.0145,d+.787,e+.112,f+.11,g+.7,-h+.643,i+.198,-j+.44,k+.08,l+.8]
+t8 = [a,b,c,d,e,f,g,h,i,j,k,l]
 t9 = [f,e,i,l,b,k,j,d,c,j,a,h]
 
-
-
-# load image_train00.npy
-lbt_data = np.load('image_train00.npy',allow_pickle=False)
-# instatiate image 3d object
-trying = Image3D(lbt_data, np.array([.25,1,1]))
-comp_image = trying.array
-# manually define matrixes 
 # that demonstate a variety of rotation, translation, 
 # scaling, general affine and combinations
-parameters = [t0,t1,t2,t3,t4,t5,t6,t7,t8,t9]
-trans = []
-for para in parameters: 
-    trans.append(AffineTransform(para).tM)
+# load image_train00.npy
+#%%
+lbt_data = np.load('image_train00.npy',allow_pickle=False)
+# instatiate image 3d object
+#lbt_data = mdup_data
+trying = Image3D(lbt_data, np.array([1,1,1]))
+#print(trying.coord)
 
+transformation = AffineTransform(t00).tM
 # generate the warped images using these transformations
-images = []
-for transformation in trans: 
-    im = Image3D(lbt_data,np.array([2,.5,.5])).warp3d(transformation)
-    images.append(im)
 
 # generate 10 different randomaly warped images and plot
 # 5 image slices for each transformed image at different 
 # z depths
 
-rand_t = []
-rand_im = []
-
-for ran in range(10): 
-    r_t =AffineTransform(None).tM 
-    rand_t.append(r_t)
-    r_im = Image3D(lbt_data,np.array([2,.5,.5])).warp3d(r_t)
-    rand_im.append(r_im)
-#%%
-a = comp_image
-
-i = images[9]
-m = 4
-fig = plt.figure()
-#fig.imshow(comp_image[m], cmap='gray',origin='lower', vmin=0, vmax=1)
-plt.imshow(i[m], cmap='gray',origin='lower', vmin=0, vmax=1)     
-plt.title('Transformed')
-plt.show()
-#%%
 # change the strength parameter in random_transform_generator
 # generate images with 5 different values for the strength 
 # parameter. visualise the randomaly transformed images
-
-r_scal = []
-for scaling in [[2],[1,4,4],[1.5],[0.5],[1/10,1/10]]:
-    r_t =AffineTransform(None,scaling).tM 
-    r_im = Image3D(lbt_data,np.array([.25,1,1])).warp3d(r_t)
-    r_scal.append(r_im)
+t =[1,0,0,1,0,1,0,0,0,0,1,0]
+t = [0,0,0,(np.pi),0,0]
 
 
-#%%
+#print(len(t))
+#transformation = AffineTransform(t).rigid_transform()
+#transformation = AffineTransform(None).random_transform_generator([1,2])
+
+#transformation = AffineTransform(None, [1]).tM
+#print(transformation)
+#sn = AffineTransform(t).sin_ap(3.24)
+
 #image = easy3d
 #image = im
 #trying = Image3D(image)
 M = transformation
 a = trying.array
 i = trying.warp3d(M)
-m = 5
-n=6
-v=7
+
 # interpolation
-
-def plot_both(a,i,m):
-    fig, ax = plt.subplots(1, 2)
-    ax[0].imshow(a[m], cmap='gray',origin='lower', vmin=0, vmax=1)
-    ax[1].imshow(i[m], cmap='gray',origin='lower', vmin=0, vmax=1)     
-    ax[0].title.set_text('Original')
-    ax[1].title.set_text('Transformed')
-    plt.show()
-
-def plot_trans(i,m):
-    fig, ax = plt.figure()
-    ax.imshow(a[m], cmap='gray',origin='lower', vmin=0, vmax=1)
-    ax.title.set_text('Transformation')
-    plt.show()
-
-
+fig, ax = plt.subplots(1, 2)
+ax[0].imshow(a[0], cmap='gray',origin='lower', vmin=0, vmax=1)
+ax[1].imshow(i[0], cmap='gray',origin='lower', vmin=0, vmax=1)     
+ax[0].title.set_text('Original')
+ax[1].title.set_text('Interpolated')
 #fig.suptitle('Warp of the original and interpolated images = ' + str(np.mean((image - image_interpn)**2)))
 fig, ax = plt.subplots(1, 2)
-ax[0].imshow(a[n], cmap='gray',origin='lower', vmin=0, vmax=1)
-ax[1].imshow(i[n], cmap='gray',origin='lower', vmin=0, vmax=1)     
+ax[0].imshow(a[1], cmap='gray',origin='lower', vmin=0, vmax=1)
+ax[1].imshow(i[1], cmap='gray',origin='lower', vmin=0, vmax=1)     
 ax[0].title.set_text('Original')
-ax[1].title.set_text('Transformed')
+ax[1].title.set_text('Interpolated')
 #fig.suptitle('Warp of the original and interpolated images = ' + str(np.mean((image - image_interpn)**2)))
 fig, ax = plt.subplots(1, 2)
-ax[0].imshow(a[v], cmap='gray',origin='lower', vmin=0, vmax=1)
-ax[1].imshow(i[v], cmap='gray',origin='lower', vmin=0, vmax=1)     
+ax[0].imshow(a[2], cmap='gray',origin='lower', vmin=0, vmax=1)
+ax[1].imshow(i[2], cmap='gray',origin='lower', vmin=0, vmax=1)     
 ax[0].title.set_text('Original')
-ax[1].title.set_text('Transformed')
+ax[1].title.set_text('Interpolated')
 #fig.suptitle('Warp of the original and interpolated images = ' + str(np.mean((image - image_interpn)**2)))
 #plt.xlim([0,200])
 plt.show()

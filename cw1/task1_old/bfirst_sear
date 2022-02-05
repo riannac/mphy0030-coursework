@@ -1,0 +1,575 @@
+# Python3 Program to print BFS traversal
+# from a given source vertex. BFS(int s)
+# traverses vertices reachable from s.
+#%%
+import numpy as np
+import numpy as np
+import time
+import urllib.request
+from scipy import ndimage
+from scipy.ndimage.morphology import distance_transform_bf
+from matplotlib import pyplot as plt
+#%%
+easy = np.array([
+    [1,0,0,1,1],
+    [1,1,1,1,1],
+    [1,1,1,1,1],
+    [0,1,1,1,1],
+    [0,1,1,1,1]])
+
+mdup_data = np.array([
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,0,1,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
+                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
+                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
+                 ])
+
+
+def pre_built(vol_bi_img):
+    """this is the scipy distance transform to compare with"""
+    return ndimage.distance_transform_edt(vol_bi_img)
+
+#%%
+## Python3 program to find the minimum distance from a
+# "1" in binary matrix.
+MAX = 1000
+INT_MAX = (2**32)
+ 
+# distance matrix which stores the distance of
+# nearest '1'
+dist = [[0 for i in range(MAX)] for j in range(MAX)]
+ 
+# Function to find the nearest '1'
+def nearestOne(mat, m, n):
+    m = mat.shape[0]
+    n= mat.shape[1] 
+    # two array when respective values of newx and
+    # newy are added to (i,j) it gives up, down,
+    # left or right adjacent of (i,j) cell
+    newx = [-1, 0, 1, 0]
+    newy = [0, -1, 0, 1]
+     
+    # queue of pairs to store nodes for bfs
+    q = []
+     
+    # traverse matrix and make pair of indices of
+    # cell (i,j) having value '1' and push them
+    # in queue
+    for i in range(m):
+        for j in range(n):
+            dist[i][j] = INT_MAX
+            if (mat[i][j] == 0):
+                 
+                # distance of '1' from itself is always 0
+                dist[i][j] = 0
+                 
+                # make pair and push it in queue
+                q.append([i, j])
+     
+    # now do bfs traversal
+    # pop element from queue one by one until it gets empty
+    # pair element to hold the currently popped element
+    poped = []
+    #q = [([i,y])]
+    while (len(q)):
+        poped = q[0]
+        q.pop(0)
+         
+        # coordinate of currently popped node
+        x = poped[0]
+        y = poped[1]
+         
+        # now check for all adjancent of popped element
+        for i in range(4):
+             
+            adjx = x + newx[i]
+            adjy = y + newy[i]
+             
+            # if new coordinates are within boundary and
+            # we can minimize the distance of adjacent
+            # then update the distance of adjacent in
+            # distance matrix and push this adjacent
+            # element in queue for further bfs
+            
+            if (adjx >= 0 and adjx < m and adjy >= 0 and
+                adjy < n):
+                if mat[adjx][adjy] == 0:
+                    print(" ")
+                elif dist[adjx][adjy] > dist[x][y] + 1:
+                # update distance
+                    dist[adjx][adjy] = dist[x][y] + 1
+                    q.append([adjx, adjy])
+                    
+    
+ 
+def min_euc(m,n):
+
+    nearestOne(mat,m,n)
+    #finding the relating coordinates of the nearest 0s
+    we = []
+    for i in range(m):
+        for j in range(n):
+            #print(dist[i][j],end='')
+            if dist[i][j] == 1 :
+                we.append([i,j])
+                #print("i,j" + str((i,j)))
+        #print()
+    #print(we)
+
+    euc_dist = []
+    #calculating the euc dist 
+    for each in range(1,len(we)):
+        x = we[each][0]
+        y = we[each][1]
+        q = np.sqrt((x)**2 + (y)**2)
+        euc_dist.append(q)
+
+    return min(euc_dist)
+
+
+#%%
+mat = easy
+print(easy)
+euc_array = np.zeros(shape=mat.shape)
+#ones = np.nonzero(mat)
+#print(ones)
+#print(min_euc(0,0))
+m = 3 
+n = 3
+nearestOne(mat,m,n)
+#finding the relating coordinates of the nearest 0s
+we = []
+for i in range(m):
+    for j in range(n):
+        print(dist[i][j], end='')
+        #if dist[i][j] == 1 :
+            #we.append([i,j])
+            #print("i,j" + str((i,j)))
+    print()
+print(we)
+#%%
+
+euc_dist = []
+#calculating the euc dist 
+for each in range(1,len(we)):
+    x = we[each][0]
+    y = we[each][1]
+    q = np.sqrt((x)**2 + (y)**2)
+    euc_dist.append(q)
+
+
+#%%
+def eun_min(m,n):
+    nearestOne(mat,m,n)
+    we = []
+    for i in range(m):
+        for j in range(n):
+            #print(dist[i][j],end='')
+            if dist[i][j] == 1 :
+                we.append([i-1,j-1])
+                
+                #print("i,j" + str((i,j)))
+        #print()
+    #print(we)
+
+    euc_dist = []
+    #calculating the euc dist 
+    for each in range(1,len(we)):
+        x = we[each][0]
+        y = we[each][1]
+        q = np.sqrt((x)**2 + (y)**2)
+        euc_dist.append(q)
+
+    #print(euc_dist)
+    return min(euc_dist)
+
+#%%
+euc_array = np.zeros(shape=mat.shape)
+ones = np.nonzero(mat)
+for one in range(1,len(ones[0])):
+    m = ones[0][one]
+    n = ones[1][one]
+    print(m,n)
+    if (m >= 1 and m < mat.shape[0] and n >= 1 and
+    n < mat.shape[1]):
+        euc_array[m][n] = min_euc(m,n)
+
+print(euc_array)
+
+
+#for onen in range(len(n)):
+
+
+
+#%%
+
+#%%
+print(we[0][0])
+print(we[0][1])
+
+
+#%%
+##########################################
+MAX = 1000
+INT_MAX = (2**32)
+ 
+# distance matrix which stores the distance of
+# nearest '1'
+dist = [[0 for i in range(MAX)] for j in range(MAX)]
+dist = np.zeros(shape = mat.shape)
+# Function to find the nearest '1'
+def nearestOne(mat, m, n):
+    #dist = np.zeros(shape = mat.shape)
+
+    # two array when respective values of newx and
+    # newy are added to (i,j) it gives up, down,
+    # left or right adjacent of (i,j) cell
+    newx = [-1, 0, 1, 0]
+    newy = [0, -1, 0, 1]
+     
+    # queue of pairs to store nodes for bfs
+    q = []
+     
+    # traverse matrix and make pair of indices of
+    # cell (i,j) having value '1' and push them
+    # in queue
+    for i in range(m):
+        for j in range(n):
+            dist[i][j] = INT_MAX
+            if (mat[i][j] == 0):
+                 
+                # distance of '1' from itself is always 0
+                dist[i][j] = 0
+                 
+                # make pair and push it in queue
+                q.append([i, j])
+     
+    # now do bfs traversal
+    # pop element from queue one by one until it gets empty
+    # pair element to hold the currently popped element
+    poped = []
+    while (len(q)):
+        poped = q[0]
+        q.pop(0)
+         
+        # coordinate of currently popped node
+        x = poped[0]
+        y = poped[1]
+         
+        # now check for all adjancent of popped element
+        for i in range(4):
+             
+            adjx = x + newx[i]
+            adjy = y + newy[i]
+             
+            # if new coordinates are within boundary and
+            # we can minimize the distance of adjacent
+            # then update the distance of adjacent in
+            # distance matrix and push this adjacent
+            # element in queue for further bfs
+            if (adjx >= 0 and adjx < m and adjy >= 0 and
+                adjy < n ): #and dist[adjx][adjy] > dist[x][y] + 1):
+                if mat[adjx][adjy] == 1:
+                    dist[adjx][adjy] = 1
+                # update distance
+                else:
+                    dist[adjx][adjy] = dist[x][y] + 1
+                    q.append([adjx, adjy])
+    return dist
+# Driver code
+mat = easy
+m = 2
+n = 2
+print(easy) 
+# Fills values in dist[][]
+nearestOne(mat, m, n)
+
+#print(dist)
+# prdistance matrix
+#for i in range(m):
+ #   for j in range(n):
+  #      print(dist[i][j], end=" ")
+   # print()
+# %%
+# Python3 program to find distance of 
+# nearest cell having 1 in a binary matrix. 
+#%%
+# Print distance of nearest cell 
+# having 1 for each cell. 
+def printDistance(mat):
+    global N, M
+    ans = [[None] * M for i in range(N)]
+
+    # Initialize the answer matrix
+    # with INT_MAX.
+    for i in range(N):
+        for j in range(M):
+            ans[i][j] = 999999999999
+
+    # For each cell 
+    for i in range(N):
+        for j in range(M):
+            
+            # Traversing the whole matrix 
+            # to find the minimum distance.
+            for k in range(N):
+                for l in range(M):
+                    
+                    # If cell contain 1, check 
+                    # for minimum distance. 
+                    if (mat[k][l] == 0):
+                        ans[i][j] = min(ans[i][j], 
+                                    np.sqrt((i - k)**2 + (j - l)**2))
+    euc_d = np.zeros(shape=mat.shape)
+    # Printing the answer.
+    for i in range(N):
+        for j in range(M):
+            euc_d[i][j]= ans[i][j]
+            #print(ans[i][j], end = " ")
+    return euc_d
+
+mat = mdup_data
+
+M= mat.shape[0]
+N= mat.shape[1]
+#print(mat)
+#print(printDistance(mat))
+#print(pre_built(mat))
+
+a = mat
+#print_properties(a)
+
+#a = easy3d
+my_alg_time = time.time()
+a1 = printDistance(a)
+print("--- %s seconds ---" % (time.time() - my_alg_time))
+
+
+pre_alg_time = time.time()
+a2 = pre_built(a)
+#a2 = pre_built(a)
+print("--- %s seconds ---" % (time.time() - pre_alg_time))
+
+# values
+print(np.array_equal (a1, a2, equal_nan=False))
+print(np.allclose(a1,a2, rtol=.2, atol=.2))
+
+#ploting
+
+plt.figure()
+plt.subplot(1,2,1)
+plt.imshow(a1)
+plt.subplot(1,2,2)
+plt.imshow(a2)
+plt.show()
+# %%
+MAX = 1000
+INT_MAX = (2**32)
+ 
+# distance matrix which stores the distance of
+# nearest '1'
+dist = [[0 for i in range(MAX)] for j in range(MAX)]
+ 
+# Function to find the nearest '1'
+def nearestOne(mat, m, n):
+     
+    # two array when respective values of newx and
+    # newy are added to (i,j) it gives up, down,
+    # left or right adjacent of (i,j) cell
+    newx = [-1, 0, 1, 0]
+    newy = [0, -1, 0, 1]
+     
+    # queue of pairs to store nodes for bfs
+    q = []
+     
+    # traverse matrix and make pair of indices of
+    # cell (i,j) having value '1' and push them
+    # in queue
+    for i in range(m):
+        for j in range(n):
+            dist[i][j] = INT_MAX
+            if (mat[i][j] == 0):
+                 
+                # distance of '1' from itself is always 0
+                dist[i][j] = 0
+                 
+                # make pair and push it in queue
+                q.append([i, j])
+     
+    # now do bfs traversal
+    # pop element from queue one by one until it gets empty
+    # pair element to hold the currently popped element
+    poped = []
+    while (len(q)):
+        poped = q[0]
+        q.pop(0)
+         
+        # coordinate of currently popped node
+        x = poped[0]
+        y = poped[1]
+         
+        # now check for all adjancent of popped element
+        for i in range(4):
+             
+            adjx = x + newx[i]
+            adjy = y + newy[i]
+             
+            # if new coordinates are within boundary and
+            # we can minimize the distance of adjacent
+            # then update the distance of adjacent in
+            # distance matrix and push this adjacent
+            # element in queue for further bfs
+            if (adjx >= 0 and adjx < m and adjy >= 0 and
+                adjy < n and dist[adjx][adjy] > dist[x][y] + 1):
+                 
+                # update distance
+                dist[adjx][adjy] = dist[x][y] + 1
+                q.append([adjx, adjy])
+ 
+# Driver code
+m = 3
+n = 4
+mat= [[0, 0, 0, 1], [0, 0, 1, 1], [0, 1, 1, 0]]
+mat = mdup_data
+m = mdup_data.shape[0]
+n = mdup_data.shape[1]
+# Fills values in dist[][]
+nearestOne(mat, m, n)
+ 
+# prdistance matrix
+for i in range(m):
+    for j in range(n):
+        print(dist[i][j], end=" ")
+    print()
+# %%
+def dans(mat):
+#%%
+    mat = mdup_data
+    m = mat.shape[0]
+    n = mat.shape[1]
+    newx = [-1, 0, 1, 0]#1, 1,-1,-1]
+    newy = [0, -1, 0, 1]#1,-1,-1, 1]
+     
+    ones=[]
+    zeros=[]
+    for i in range(m):
+        for j in range(n): 
+            if mat[i][j]==0:
+                zeros.append(np.array([i,j]))
+            else: 
+                ones.append(np.array([i,j]))
+                #q.append([i,j])
+    
+    print(easy)
+    visit= np.zeros(shape=(mat.shape))
+
+    #ones = [np.array([2,2]), np.array([0,3])]
+    euc_array= np.zeros(shape=(mat.shape))
+    #print(ones)
+
+    for one in ones:
+        visit= np.ones(shape=(mat.shape))
+        visit[one[0]][one[1]] = 0
+        #euc_array[one[0]][one[1]] = 0
+        visit = visit*999
+        #euc_array = euc_array*999
+        #print((one[0],one[1]))
+        q= [one]
+        euc_dist=[]
+        poped = []
+
+        while (len(q)):
+            poped = q[0]
+            q.pop(0)
+
+            # coordinate of currently popped node
+            x = poped[0]
+            y = poped[1]
+            
+            #print(poped, end ='')
+       
+            # now check for all adjancent of popped element
+            for i in range(4):
+                
+                adjx = x + newx[i]
+                adjy = y + newy[i]
+                #print([x,y], end='')
+                if (adjx >= 0 and adjx < m and adjy >= 0 and
+                    adjy < n):
+                    a = 1
+                    e = np.sqrt((one[0]-adjx)**2+(one[1]-adjy)**2)
+                    if mat[adjx][adjy]==0:
+                        euc_dist.append(e)
+                        
+                    elif visit[adjx][adjy] > visit[x][y] +1:
+                        visit[adjx][adjy] = visit[x][y] +1
+                        # == 0:# visit[adjx][adjy] + 1:
+                        #visit[adjx][adjy] = 1
+                        #print((adjx,adjy),end='')
+                    
+                        #if mat[adjx][adjy]==0:
+                         #   e = np.sqrt((one[0]-adjx)**2+(one[1]-adjy)**2)
+                          #  euc_dist.append(e)
+                           # print("zero at"+str((adjx,adjy)))
+                            #print(min(euc_dist)) 
+                            #visit[adjy][adjy] = min(euc_dist)
+                        #else:
+                        q.append([adjx,adjy])
+                     #   visit[adjy][adjy] = 1
+                    #else:
+                       # q.append([adjx, adjy])
+        euc_array[one[0]][one[1]] =  min(euc_dist)
+        #print(visit)
+    
+    #print(euc_array) 
+
+    #print(pre_built(mat))
+
+    plt.figure()
+    plt.subplot(1,2,1)
+    plt.imshow(euc_array)
+    plt.subplot(1,2,2)
+    plt.imshow(pre_built(mat))
+    plt.show()
+
+#%%
+                    if mat[adjx][adjy]==0:
+                        
+                        e = np.sqrt((x-adjx)**2+(y-adjy)**2)
+                        euc_dist.append(e)
+                if euc[adjx][adjy] > e:
+                    euc[adjx][adjy] = e
+                q.append([adjx, adjy])
+                #eq = np.sqrt((this-(x+1))**2+((that-y)**2))
+                #ew = np.sqrt((this-x)**2+(that-(y+1))**2)
+                #print (e,eq,ew)
+                
+                    dist[adjx][adjy] = 0):
+                    
+                    # update distance
+                    dist[adjx][adjy] = dist[x][y] + 1
+                    q.append([adjx, adjy])
+    
+
+
+        for zero in zeros:
+            dist = np.sqrt((one[0]-zero[0])**2+(one[1]-zero[1])**2)
+            euc_dist.append(dist)
+        euc_array[one[0]][one[1]] = min(euc_dist)
+
+        #print(min(euc_dist))
+        #print(euc_dist.index(min(euc_dist)))
+        
+        #print(min(euc_dist))
+    return euc_array
