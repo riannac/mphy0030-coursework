@@ -4,7 +4,7 @@ import time
 import urllib.request
 from scipy import ndimage
 from matplotlib import pyplot as plt
-
+#%%
 #setting arrays
 easy = np.array([
     [1,0,0,1,1],
