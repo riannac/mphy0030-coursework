@@ -31,57 +31,6 @@ lbt_data = np.load('lbt_file.npy',allow_pickle=False)
 vox_dims = (2,.5,.5)
 
 
-#%%
-mdup_data = np.array([
-                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 0, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 0, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
-                 [0, 0, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
-                 [0, 0, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
-                 [0, 0, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 0, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 0, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
-                 [0, 0, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
-                 [0, 0, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
-                 [0, 0, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
-                 [0, 0, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
-
-                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,0],
-                 [0, 1, 1, 1, 0, 0, 0, 0, 0,0,0,1,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
-
-                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,0,1,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
-                 ])
-
 def print_properties(x):
     """prints the properties of an array"""
     print("\n type : " + str(type(x))
@@ -92,8 +41,7 @@ def print_properties(x):
     + "\n itemsize : " + str(x.itemsize)
     + "\n nbytes : " + str(x.nbytes))
 
-#%%
-"""Implement a function surface_normals_np"""
+
 def normalised(array):    
     """Normalize an x,y,z array"""    
     avr = (array[:,0]**2 + array[:,1]**2 + array[:,2]**2)**(.5)    
@@ -101,6 +49,8 @@ def normalised(array):
     array[:,1] /= avr
     array[:,2] /= avr                     
     return array
+
+# Implement a function surface_normals_np
 
 def surface_normals_np(vertices, triangles):
     """Takes a triangulated surface as input 
@@ -128,13 +78,8 @@ def cos_compare(my_norms, mm_normals):
         b = mm_normals[each]
         c = np.dot(a,b)/((np.linalg.norm(a))*(np.linalg.norm(b)))
         cos_sim[each] = c
-    #print("Cosine Similarity:")
-    #print(" Mean = " + str(np.mean(cos_sim)),end = '')
-    #print(" Median = " +str(np.median(cos_sim)),end = '')
-    #print(" Standard deviation = " + str(np.std(cos_sim)))
     print("( Mean, Median, Std ) ", end = ' ') 
     print(((np.mean(cos_sim)),(np.median(cos_sim)),(np.std(cos_sim))))
-
 
 def face_from_vert(triangles, normals):
     """average of triangle normals = (x+x+x/3, y+y+y/3, z+z+z/3 etc)"""
@@ -142,25 +87,29 @@ def face_from_vert(triangles, normals):
     for tri in range(triangles.shape[0]):
         nt = normals[triangles[tri]]
         fa_norm[tri] = (nt[0]+nt[1]+nt[2])/3
-        
     return(fa_norm)
 
 #%%
-"""use mearse marching cubes to compute vertex normals"""
+#####################################################################################
+# use mearse marching cubes to compute vertex normals
 data = lbt_data
 vertex_coord, tri_angles, mm_normals, _ = marching_cubes(data,spacing=vox_dims[0:3],step_size=2)
 vert_norms, cent_norms =(surface_normals_np(vertex_coord, tri_angles))
 
-#vert_norms = normals
-"""Determine a reasonable metric for comparing
-average cosine similarity"""
+
+######################################################################################
+# vert_norms = normals
+# Determine a reasonable metric for comparing average cosine similarity
+
 print("\n")
 cos_compare(vert_norms, mm_normals)    
 print("The similarity of the results is quite high, however, due to the approximations involved " +
 "in the Marching Cubes algorithm, the normals generated by surface_normals_np" + 
 "are not exactly the same as those generated by Marching Cubes.")
 #%%
-"""design  a method to compare vertex normals and triangle centre normals"""
+
+#####################################################################################
+#design  a method to compare vertex normals and triangle centre normals
 
 print("\nThere is not standard way to go from vertex to face normal, " + 
 "as there is no way of doing this with out losing information." + 
@@ -172,28 +121,30 @@ cos_compare(cent_norms,mm_face)
 #my_v2face = face_from_vert(tri_angles, vert_norms)
 #cos_compare(cent_norms,my_v2face)
 
-# %%
-"""Use a gaussian filter"""
-data = lbt_data
-sigmas = [0.5,1,2.,2.5,4]
-#sigmas = [10,20,40]
+#%%
+#####################################################################################
+# Use a gaussian filter"""
+array = lbt_data
+data = (array-array.min()) / (array.max()-array.min()) *255 
+
+sigmas = [3,5,7,10]
 slice = 20
 a = 1
 rr_mmv =[]
 rr_vn =[]
 rr_cn = []
-#rr_mmv.append(gmm_normals)
-#rr_vn.append(gvert_norms)
-#rr_cn.append(gcent_norms)
-# call guassian filter on image
-# normalised 0-255
-# int unsinged 8
-# and smooth it
-plt.figure()
+
+fig = plt.figure()
+fig.set_size_inches(10,2.5) 
 plt.subplot(1,(len(sigmas))+1,a)
 plt.title("og")
 plt.imshow(data[slice])
-print("\nThe higher the sigma, the more smoothing there is, therefore, the image gets smaller as the outer layer is erroded.")
+print("\nThe higher the sigma, the more smoothing there is, therefore, the boundary of the image becomes more unclear, quite literally less black and white, with more grey scale values")
+print("As the values are changing, and shifting for the original 0s and 1s, the comparison metrics get worse.")
+print("With the cosine similarity mean becoming smaller and the stadard deviation increasing.")
+
+# I used plt for visualisation which i believe is okay since we were not 
+# specifically asked to plot the smoothed surfaces 
 for s in sigmas:
     a += 1
     plt.subplot(1,(len(sigmas))+1,a)
@@ -228,7 +179,6 @@ trix = faces
 ax.plot_trisurf(px[:,0], px[:,1], px[:,2], triangles=trix, color='b')
 ax.quiver(verts[:,0],verts[:,1],verts[:,2], normals[:,0],normals[:,1],normals[:,2])
 plt.show()
-#%%
 verts, faces, normals, values = marching_cubes(mdup_data,spacing=vox_dims[0:3],step_size=2)
 print(normals)
 #fig = plt.figure(figsize=(10, 10))
