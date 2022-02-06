@@ -173,15 +173,20 @@ for i in [0,4]:
     plt.show()
 #%%
 def save_im(array, title):
-    """Aaves an array as an image using pillow, with title input including image type, ex:.png """
-    array = (array-array.min()) / (array.max()-array.min()) *255 
+    """Saves an array as an image using pillow, with title input including image type, ex:.png """
+    dem = array.max()-array.min()
+    if dem == 0:
+        array = (array- array.min())*0
+    else:
+        array = (array-array.min()) / (dem) *255       
+    #array = (array-array.min()) / (array.max()-array.min()) *255 
     im = Image.fromarray(array.astype('uint8'))
     im.save(title)
 
 from PIL import Image
 for i in [2,4,6]:
     my = a[i]
-    title = '../task1/slice'+str(f+i) +'_im.png'
+    title = '../task1/slice'+str(f+i) +'_0im.png'
     save_im(my, title)
 
     my = ab[f+i]
@@ -194,14 +199,14 @@ for i in [2,4,6]:
 
 for i in [0,4]:
     my=b[i]
-    title = '../task1/slice' + str(j+i) +'_im.png'
+    title = '../task1/slice' + str(j+i) +'_0im.png'
     save_im(my,title)
 
     my=ab[j+i]
     title = '../task1/slice' + str(j+i) +'_edt.png'
     save_im(my,title)
 
-    my=a2[i]
+    my=b2[i]
     title = '../task1/slice' + str(j+i) +'_np.png'
     save_im(my, title)
 
