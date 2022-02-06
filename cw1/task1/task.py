@@ -220,7 +220,7 @@ def distance_transform_np(v_b_i, dims = np.array([1,1,1])):
 
 # In the interest of time I have only computed the distance_transform_np for the 
 # regions around the points i've chosen to plot. 
-# I have compared the array values to the distance_transform_edt[full]
+# I have compared the array values to the distance_transform_edt[full] (for mean and std)
 # and i have compared the time to the distance_transform[region]
 f = 7 
 g = 14
@@ -230,40 +230,33 @@ j=19
 k=26
 b = lbt_data[j:k]
 #%%
-#f = 7 
-#g = 10
-#a = lbt_data[f:g]
-
-#j=23
-#k=26
-#b = lbt_data[j:k]
-#a = lbt_data
-#ab = pre_built(lbt_data)
 print("Time Comparison")
 ab = ndimage.distance_transform_edt(lbt_data, sampling = [2,.5,.5])
-my_alg_time = time.time()
+pre_alg_time = time.time()
 a1 = ndimage.distance_transform_edt(a,sampling=[2,.5,.5])
 b1 = ndimage.distance_transform_edt(b,sampling=[2,.5,.5])
 #a1 = pre_built(a)
 #b1 = pre_built(b)
-print("distance_trans_ent takes %s seconds " % (time.time() - my_alg_time))
+print("distance_trans_ent takes %s seconds " % (time.time() - pre_alg_time))
 
 #print(a1[15])
-pre_alg_time = time.time()
+my_alg_time = time.time()
 a2 = distance_transform_np(a, dims=np.array([2,.5,.5]))
 b2 = distance_transform_np(b, dims=np.array([2,.5,.5])) 
-print("distance_transform_np takes %s seconds " % (time.time() - pre_alg_time))
+print("distance_transform_np takes %s seconds " % (time.time() - my_alg_time))
 
 print("\nMy implementation is much slower than distance_transform_edt which runs through c. I have implemented a Brute Force Approach, which is known for being memory and time intensive.")
 
-mean_voxel_difference = np.mean((a1 - a2)+(b1-b2))
-std_of_voxel_difference = np.mean((a1 - a2)+(b1-b2))
+#%%
+mean_voxel_difference = np.mean((ab[f:g] - a2)+(ab[j:k]-b2))
+std_of_voxel_difference = np.mean((ab[f:g] - a2)+(ab[j:k]-b2))
+
 print("\nMean voxel level difference = ", end = '')
 print(mean_voxel_difference)
 print("Standard deviation of voxel level difference = ", end = '')
 print(std_of_voxel_difference)
-
 #%%
+# much prettier saved through matplotlib but have done through pillows too
 for i in [2,4,6]:
     plt.figure()
     plt.subplot(1,3,1)
@@ -299,34 +292,36 @@ for i in [0,4]:
     plt.savefig('../task1/slice'+str(j+i)+'.png') 
     plt.show()
 #%%
-"""
-from PIL import Image
-from matplotlib import cm
+def save_im(img1, title):
+    img1 = (img1-img1.min()) / (img1.max()-img1.min()) *255 # to uint8
+    im = Image.fromarray(img1.astype('uint8'))
+    im.save(title)
 
+from PIL import Image
 for i in [2,4,6]:
-    myarray=a[i]
-    im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
+    my = a[i]
     title = '../task1/slice'+str(f+i) +'_im.png'
-    im.save(title)
-    myarray=ab[f+i]
-    im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
+    save_im(my, title)
+
+    my = ab[f+i]
     title = '../task1/slice' + str(f+i) +'_edt.png'
-    im.save(title)
-    myarray2=a2[i]
-    im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
+    save_im(my, title)
+
+    my=a2[i]
     title = '../task1/slice' + str(f+i) +'_np.png'
-    im.save(title)
+    save_im(my, title)
 
 for i in [0]:#,4]:
     my=b[i]
-    im = Image.fromarray(np.uint8(cm.gist_earth(my*255)))
     title = '../task1/slice' + str(j+i) +'_im.png'
-    im.save(title)
-    myarray=ab[j+i]
-    im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
+    save_im(my,title)
+
+    my=ab[j+i]
     title = '../task1/slice' + str(j+i) +'_edt.png'
-    im.save(title)
-    myarray2=a2[i]
-    im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
+    save_im(my,title)
+
+    my=a2[i]
     title = '../task1/slice' + str(j+i) +'_np.png'
-    im.save(title) """
+    save_im(my, title)
+
+# %%
