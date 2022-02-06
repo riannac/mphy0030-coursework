@@ -4,126 +4,12 @@ import time
 import urllib.request
 from scipy import ndimage
 from matplotlib import pyplot as plt
-#%%
-#setting arrays
-easy = np.array([
-    [1,0,0,1,1],
-    [1,1,1,1,1],
-    [1,1,1,1,1],
-    [0,1,1,1,1],
-    [0,1,1,1,1]])
-
-easy3d = np.array([
-        [[ 0, 1, 1, 1, 0],
-        [ 1, 1, 1, 1, 1],
-        [ 0, 1, 1, 1, 0],
-        [ 0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 1]],
-
-       [[ 0, 0, 1,1,0],
-        [0, 0, 1,1,1],
-        [1, 0, 1,1,0],
-        [0,0,0,1,1],
-        [0,0,0,0,1]],
-
-       [[0, 0, 0,1,1],
-        [0, 0, 1,1,1],
-        [1, 0, 0,1,0],
-        [0,0,0,1,1],
-        [0,0,1,1,1]]])
-
-mdup_data = np.array([
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,0,1,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 ])
-
-
-mdup_data3d = np.array([
-                [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
-                 
-                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
-
-                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,0],
-                 [0, 1, 1, 1, 0, 0, 0, 0, 0,0,0,1,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
-
-                 [[0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,0,1,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,0,0,0,1,1,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,0,0],
-                 [0, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 1, 1, 1, 1,0,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 1, 1, 1,1,0,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 1, 1,1,1,0,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 1,1,1,1,0,0,0],
-                 [0, 1, 1, 0, 0, 0, 0, 0, 0,1,1,1,1,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0]],
-
-                
-                 ])
-
 
 #%%
 #function definitions
 
 def print_properties(x):
+    """print all properties of an array"""
     print("\n type : " + str(type(x))
     + "\n size : " + str(x.size)
     + "\n shape : " + str(x.shape)
@@ -146,18 +32,13 @@ def plot_comp(data, slice_index=15):
     plt.show()
 
 def ecld_dist_alg(p,q):
-    """euclidean distance between two points
-       np.sqrt((p[x]-qx)**2 + (py-qy)**2 + (pz-qz)**2)
-    """
-    #return np.linalg.norm(p-q)
-    return np.sqrt(np.sum((p-q)**2))# axis = 1))
+    """euclidean distance between two points p,q
+       np.sqrt((p[x]-qx)**2 + (py-qy)**2 + (pz-qz)**2)    """
+    return np.sqrt(np.sum((p-q)**2))
 
 def pre_built(vol_bi_img):
     """this is the in built distance transform to compare with"""
     return ndimage.distance_transform_edt(vol_bi_img)
-
-def brute(vol_bi_img):
-    return ndimage.distance_transform_bf(vol_bi_img)
 
 ###########################################################################
 
@@ -170,7 +51,6 @@ download label_train00.npy from download link provided in course work
 
 lbt_url = 'https://weisslab.cs.ucl.ac.uk/WEISSTeaching/datasets/-/raw/promise12/label_train00.npy'
 urllib.request.urlretrieve(lbt_url, 'lbt_file.npy')
-#%%
 lbt_data = np.load('lbt_file.npy',allow_pickle=False)
 
 """
@@ -179,7 +59,7 @@ input = bianary image
 output = distance map
 
 each pixel contains the euclidean distance
-to the closest obstacle pixel, this case boundary pixel
+to the closest obstacle pixel, in this case boundary pixel
 
 ecld_dist = sqrt((p[i]-q[i]**2)+(p[j]-q[j]**2)+(p[k]-q[k]**2)))
 
@@ -190,25 +70,25 @@ for each 1, the distance from the nearest 0
 def distance_transform_np(v_b_i, dims = np.array([1,1,1])):
     """Brute force approach. Find coordinates fo all zeroes and all ones. 
     For each one compute the euclidean distance to all zeros 
-    and save the minimun distance in the transform"""
-    #v_b_i = volumetric binary image
-    #dims = np.array([dx,dy,dz])
-    zeros_coord = np.where(v_b_i == 0) #find the coordinates of all zeros 
-    zeros = np.asarray(zeros_coord).T # store them
+    and save the minimun distance in the transform
+    Inputs:
+    v_b_i = volumetric binary image, input as an array
+    dims = np.array([dx,dy,dz]), the dimentions of the image in each direction, also and array
+    """
+    zeros_coord = np.where(v_b_i == 0)                  #find the coordinates of all zeros 
+    zeros = np.asarray(zeros_coord).T                   # store them
     zeros_ = zeros*dims
-    ones_coord = np.where(v_b_i == 1) # find coordinates of all ones
-    ones = np.asarray(ones_coord).T #store them
+    ones_coord = np.where(v_b_i == 1)                   # find coordinates of all ones
+    ones = np.asarray(ones_coord).T                     #store them
     ones_ = ones*dims
-    # calculate distance 
-    # sum of coordinates squared
-    a = -2 * np.dot(ones_, zeros_.T) 
-    b = np.sum(np.square(zeros_), axis=1) 
+                                                        
+                                                        
+    a = -2 * np.dot(ones_, zeros_.T)                    # calculate distance 
+    b = np.sum(np.square(zeros_), axis=1)               # sum of coordinates squared
     c = np.sum(np.square(ones_), axis=1)[:,np.newaxis]
-    euc_dist = a + b + c
-    # sqrt of sums
-    # min euclidean dist of each one pixel to zero pixel
-    euc_dist = np.sqrt(euc_dist.min(axis=1)) 
-    x = v_b_i.shape[0]
+    euc_dist = a + b + c                                #sqrt of sums   
+    euc_dist = np.sqrt(euc_dist.min(axis=1))            #min euclidean dist of each one pixel to zero pixel
+    x = v_b_i.shape[0]                          
     y = v_b_i.shape[1]
     z = v_b_i.shape[2]
     euc_d_transform = np.zeros((x,y,z))
@@ -218,7 +98,7 @@ def distance_transform_np(v_b_i, dims = np.array([1,1,1])):
 
 #%%
 
-# In the interest of time I have only computed the distance_transform_np for the 
+# In the interest of computational time I have only computed the distance_transform_np for the 
 # regions around the points i've chosen to plot. 
 # I have compared the array values to the distance_transform_edt[full] (for mean and std)
 # and i have compared the time to the distance_transform[region]
@@ -292,9 +172,10 @@ for i in [0,4]:
     plt.savefig('../task1/slice'+str(j+i)+'.png') 
     plt.show()
 #%%
-def save_im(img1, title):
-    img1 = (img1-img1.min()) / (img1.max()-img1.min()) *255 # to uint8
-    im = Image.fromarray(img1.astype('uint8'))
+def save_im(array, title):
+    """Aaves an array as an image using pillow, with title input including image type, ex:.png """
+    array = (array-array.min()) / (array.max()-array.min()) *255 
+    im = Image.fromarray(array.astype('uint8'))
     im.save(title)
 
 from PIL import Image
@@ -311,7 +192,7 @@ for i in [2,4,6]:
     title = '../task1/slice' + str(f+i) +'_np.png'
     save_im(my, title)
 
-for i in [0]:#,4]:
+for i in [0,4]:
     my=b[i]
     title = '../task1/slice' + str(j+i) +'_im.png'
     save_im(my,title)
