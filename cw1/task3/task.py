@@ -342,7 +342,7 @@ t9 = [f,e,i,l,b,k,j,d,c,j,a,h]
 lbt_url = 'https://weisslab.cs.ucl.ac.uk/WEISSTeaching/datasets/-/raw/promise12/image_train00.npy'
 urllib.request.urlretrieve(lbt_url, 'lbt_file.npy')
 lbt_data = np.load('lbt_file.npy',allow_pickle=False)
-dims = np.array([1,1,1])
+dims = np.array([2,.5,.5])
 # instatiate image 3d object
 trying = Image3D(lbt_data, dims)
 normalised_image = trying.array
@@ -396,11 +396,12 @@ pil_silce(rand_im,slist,"Random_trans_")
 # change the strength parameter in random_transform_generator
 # generate images with 5 different values for the strength 
 # parameter. visualise the randomaly transformed images
-
+r_scal_t = []
 r_scal = []
 for p in [0.3,0.7,0.5,1,0.8]:
     r_t =AffineTransform(None, st = p).tM 
     r_im = Image3D(lbt_data,np.array([1,1,1])).warp3d(r_t)
+    r_scal_t.append(r_t)
     r_scal.append(r_im)
 
 pil_silce(r_scal,slist,"Rand_sal_trans_")
@@ -408,3 +409,5 @@ pil_silce(r_scal,slist,"Rand_sal_trans_")
 
 #################################################################################
 
+
+# %%
