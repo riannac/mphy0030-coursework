@@ -1,3 +1,5 @@
+"""I've commented out all the plotting so that it runs nicely"""
+
 """
 Implementation of a reslicing algorithm that obtains
 an image slice in a non-orthogonal plane reasonable
@@ -95,6 +97,7 @@ resampled_image3 = sitk.Resample(image_id, euc_trans_3d3)
 m= 140
 n= 100
 l = 100
+"""
 plt.figure(figsize=(15,15))
 plt.subplot(1,4,1)
 plt.imshow(sitk.GetArrayFromImage(resampled_image)[m+20,:,:])
@@ -131,7 +134,7 @@ plt.imshow(sitk.GetArrayFromImage(resampled_image1)[:,:,l])
 plt.xlabel("Rotation = pi+pi/5")
 plt.xticks([]), plt.yticks([])   
 plt.show()
-
+"""
 #%%
 
 """ Perona Malik Diffusion 2D """
@@ -192,7 +195,7 @@ im = sitk.GetArrayFromImage(image)
 g = sitk.GetArrayFromImage(gim)
 im_2d = im[140,:,:]
 g_2d = g[140,:,:]
-
+"""
 plt.figure(figsize=(15,15))
 plt.subplot(1, 4, 1), plt.imshow(g_2d)
 plt.xlabel("Original")
@@ -207,6 +210,7 @@ plt.subplot(1, 4, 4), plt.imshow(filtering_2d(g_2d, iterations, delta, 40))
 plt.xlabel("Kappa = 40")
 plt.xticks([]), plt.yticks([])
 plt.show()
+"""
 #%%
 
 # %%
@@ -306,7 +310,7 @@ def filtering_3d(image_3d,iterations=1,kappa=50,gamma=0.1,option=1,step=(1.,1.,1
 
     return filtering_im
 # %%
-
+"""
 #perona(im[:,:,110],g[:,:,89,])
 d3 = filtering_3d(im) 
 plt.figure(figsize=(15,15))
@@ -465,3 +469,4 @@ print(np.mean(rt))
 print(np.std(rt))
 
 # %%
+"""
