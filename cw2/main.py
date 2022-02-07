@@ -211,11 +211,9 @@ plt.show()
 
 # %%
 
-def filtering_3d(image_3d,iterations=1,kappa=50,gamma=0.1,step=(1.,1.,1.)):
-    option=1
-    ploton=False
+def filtering_3d(image_3d,iterations=1,kappa=50,gamma=0.1,option=1,step=(1.,1.,1.)):
+    
     """
-    stack,niter=1,kappa=50,gamma=0.1,step=(1.,1.,1.),option=1,ploton=False
     Adapted from https://github.com/awangenh/fastaniso/blob/master/fastaniso.py
     3D Anisotropic diffusion.
     Usage:
@@ -240,8 +238,6 @@ def filtering_3d(image_3d,iterations=1,kappa=50,gamma=0.1,step=(1.,1.,1.)):
     step is used to scale the gradients in case the spacing between adjacent
     pixels differs in the x,y and/or z axes
     Diffusion equation 1 favours high contrast edges over low contrast ones.
-    Diffusion equation 2 favours wide regions over smaller ones.
-    Reference:
     P. Perona and J. Malik.
     Scale-space and edge detection using ansotropic diffusion.
     IEEE Transactions on Pattern Analysis and Machine Intelligence,
@@ -277,12 +273,12 @@ def filtering_3d(image_3d,iterations=1,kappa=50,gamma=0.1,step=(1.,1.,1.)):
 
     for ii in range(iterations):
 
-        # calculate the diffs
+        # calculate the diffusion
         deltaD[:-1,: ,:  ] = np.diff(filtering_im,axis=0)
         deltaS[:  ,:-1,: ] = np.diff(filtering_im,axis=1)
         deltaE[:  ,: ,:-1] = np.diff(filtering_im,axis=2)
 
-        # conduction gradients (only need to compute one per dim!)
+        # gradients 
         if option == 1:
             gD = np.exp(-(deltaD/kappa)**2.)/step[0]
             gS = np.exp(-(deltaS/kappa)**2.)/step[1]
