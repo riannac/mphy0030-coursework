@@ -6,3 +6,5 @@ Each containing the required internal folders.
 
 
 Code had been adapted using tutorials and class notes. 
+
+# Add note about required packages/environment
